@@ -17,12 +17,18 @@ class GebruikerController extends AbstractController
     #[Route('/admin', name: 'app_admin')]
     public function admin(): Response
     {
-        return $this->render('admin/index.html.twig');
+        return $this->render('admin/admin.html.twig');
     }
 
     #[Route('/profile', name: 'app_profile')]
     public function profile(): Response
     {
-        return $this->render('profile/index.html.twig');
+        return $this->render('profile/profile.html.twig');
+    }
+
+    #[Route('/lessons', name: 'app_lessons')]
+    public function lessons(): Response
+    {
+        return $this->render('lessons/lessons.html.twig');
     }
 }

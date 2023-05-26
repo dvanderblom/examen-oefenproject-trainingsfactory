@@ -1,0 +1,23 @@
+{% block body %}
+<nav class="nav">
+    <ul>
+        <li><a href={{ app.user ? '/logout' : '/login' }}>{{ app.user ? 'Uitloggen' : 'Inloggen/Registreren' }}</a></li>
+        <li><a href="/lessons">Lessen</a></li>
+        <li><a href="/profile">Profiel</a></li>
+        <li><a href="/">Home</a></li>
+    </ul>
+</nav>
+
+<style>
+    li {
+        float: right;
+        margin-right: 20px;
+        list-style: none;
+    }
+
+    ul a {
+        list-style: none;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -60,6 +62,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $place = null;
+
+    #[ORM\OneToMany(mappedBy: 'instructor', targetEntity: Lesson::class, orphanRemoval: true)]
+    private Collection $lessons;
+
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Registration::class)]
+    private Collection $registrations;
+
+    public function __construct()
+    {
+        $this->lessons = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -247,6 +261,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlace(?string $place): self
     {
         $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lesson>
+     */
+    public function getLessons(): Collection
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson(Lesson $lesson): self
+    {
+        if (!$this->lessons->contains($lesson)) {
+            $this->lessons->add($lesson);
+            $lesson->setInstructor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesson(Lesson $lesson): self
+    {
+        if ($this->lessons->removeElement($lesson)) {
+            // set the owning side to null (unless already changed)
+            if ($lesson->getInstructor() === $this) {
+                $lesson->setInstructor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Registration>
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): self
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registrations->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getPerson() === $this) {
+                $registration->setPerson(null);
+            }
+        }
 
         return $this;
     }

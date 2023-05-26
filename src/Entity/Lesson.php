@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LessonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,18 @@ class Lesson
 
     #[ORM\Column]
     private ?int $maxpersons = null;
+
+    #[ORM\ManyToOne(inversedBy: 'lessons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $instructor = null;
+
+    #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: Registration::class)]
+    private Collection $registrations;
+
+    public function __construct()
+    {
+        $this->registrations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +89,48 @@ class Lesson
     public function setMaxpersons(int $maxpersons): self
     {
         $this->maxpersons = $maxpersons;
+
+        return $this;
+    }
+
+    public function getInstructor(): ?User
+    {
+        return $this->instructor;
+    }
+
+    public function setInstructor(?User $instructor): self
+    {
+        $this->instructor = $instructor;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Registration>
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): self
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setLesson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registrations->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getLesson() === $this) {
+                $registration->setLesson(null);
+            }
+        }
 
         return $this;
     }
