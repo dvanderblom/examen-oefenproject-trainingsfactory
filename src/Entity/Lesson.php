@@ -35,6 +35,10 @@ class Lesson
     #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: Registration::class)]
     private Collection $registrations;
 
+    #[ORM\ManyToOne(inversedBy: 'lessons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Training $training = null;
+
     public function __construct()
     {
         $this->registrations = new ArrayCollection();
@@ -131,6 +135,18 @@ class Lesson
                 $registration->setLesson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTraining(): ?Training
+    {
+        return $this->training;
+    }
+
+    public function setTraining(?Training $training): self
+    {
+        $this->training = $training;
 
         return $this;
     }
