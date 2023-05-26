@@ -27,6 +27,9 @@ class Training
     #[ORM\OneToMany(mappedBy: 'training', targetEntity: Lesson::class)]
     private Collection $lessons;
 
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
     public function __construct()
     {
         $this->lessons = new ArrayCollection();
@@ -99,6 +102,18 @@ class Training
                 $lesson->setTraining(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

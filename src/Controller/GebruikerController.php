@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Training;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,10 +27,22 @@ class GebruikerController extends AbstractController
     {
         return $this->render('profile/profile.html.twig');
     }
-
-    #[Route('/lessons', name: 'app_lessons')]
-    public function lessons(): Response
+    
+    #[Route('/training', name: 'app_training')]
+    public function training(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('lessons/lessons.html.twig');
+        $trainings = $entityManager->getRepository(Training::class)->findAll();
+
+        return $this->render('training/training.html.twig', array('trainings' => $trainings));
+    }
+
+    #[Route('/inschrijven', name: 'app_inschrijven')]
+    public function inschrijven(EntityManagerInterface $entityManager): Response
+    {
+        $trainings = $entityManager->getRepository(Training::class)->findAll();
+
+        return $this->render('training/training.html.twig', array('trainings' => $trainings));
     }
 }
+
+
